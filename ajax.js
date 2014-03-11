@@ -7,7 +7,6 @@ window.onload = function() {
 	elem.addEventListener( "click", function(e){
 		DisplayGitHubUserData();
 		e.preventDefault();
-		return false;
 	});
 }
 
