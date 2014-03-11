@@ -126,7 +126,7 @@ function parseRepos(respond) {
 	var repos = JSON.parse(respond);
 	if(!repos) { return; }	
 
-	for ( key in repos ) {
+	for ( var key in repos ) {
 		repoList[i++] = repos[key].name;
 	}
 
@@ -134,7 +134,7 @@ function parseRepos(respond) {
 }
 
 function	displayReposFields(reposFields) {
-	var reposList;
+	var reposList, reposTag;
 	if(!reposFields) {
 		reposList = "No public repos";
 	}
