@@ -2,9 +2,8 @@
 //2.Если нет, то достать, распарсить и положить в кэш.
 //3.Отобразить
 
-window.onload = function(){
+window.onload = function() {
 	var elem = document.getElementById('search_button');
-	console.log(elem);
 	elem.addEventListener( "click", function(e){
 		DisplayGitHubUserData();
 		e.preventDefault();
@@ -26,7 +25,7 @@ function DisplayGitHubUserData() {
 
 	var infoFields = getUserFieldsFromCache('info_' + username);
   	if(!infoFields) {
-  		var t = xmlRequest('https://api.github.com/users/' + username, function(responseText) {
+  			xmlRequest('https://api.github.com/users/' + username, function(responseText) {
 			infoFields = parseInfo(responseText);
 			displayInfoFields(infoFields);		
 			storeFieldsToCache("info_" + username, infoFields);
@@ -110,33 +109,29 @@ function parseInfo(respond) {
 							 'followers':{cutFromEnd:1,cutFromBegin:12}};
 
 	for(var fieldName in fieldsList) {
-		var exp = new RegExp (fieldName + "\":.*",'ig');
-  		var field = respond.match(exp);
-		if(!field) { tmp = "no " + fieldName; }	
+		var field = JSON.parse(respond);
+		if((!field[fieldName]) ) {
+			infoFields[fieldName] = 'No';		
+		}
 		else {
-			tmp = field[0].slice(fieldsList[fieldName].cutFromBegin);
-			if (tmp == "ull,") {
-				infoFields[fieldName] = "no " + fieldName;
-				continue;			
-			}
-			var len = tmp.length - fieldsList[fieldName].cutFromEnd;
-			tmp = tmp.slice(0, len);
-	  	}
-		infoFields[fieldName] = tmp;
+			infoFields[fieldName] = field[fieldName];
+		}
    }
 
    return infoFields;
 }
 
-function parseRepos(respond){
-	var i;
-	var repos = respond.match(/"name":.*/ig);
-	if(!repos) { return repos; }	
-	for (i = 0; i < repos.length ; i++) {
-		repos[i] = repos[i].slice(9);
-		repos[i] = repos[i].slice(0, repos[i].length-2);
-	}	
-	return repos;
+function parseRepos(respond) {
+	var i = 0;
+	var repoList = [];
+	var repos = JSON.parse(respond);
+	if(!repos) { return; }	
+
+	for ( key in repos ) {
+		repoList[i++] = repos[key].name;
+	}
+
+	return repoList;
 }
 
 function	displayReposFields(reposFields) {
